@@ -1,0 +1,17 @@
+# Don't include terraform plugins
+.terraform
+
+# Don't store tfstate from tests
+terraform.tfstate*
+
+# Don't store zips which we upload to AWS
+*.zip
+
+# This is the directory which we will wrap
+lambda/out
+
+# Preserve this directory in git so that terraform archive will work
+!lambda/out/.gitkeep
+
+# Ignore node_modules directory from everywhere
+node_modules
