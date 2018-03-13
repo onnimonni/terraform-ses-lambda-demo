@@ -10,7 +10,7 @@ resource "aws_s3_bucket" "reports" {
     region   = "eu-west-1"
     acl      = "private"
 
-    # When objects are overwritten don't preserve the earlier versions just in case
+    # When objects are overwritten preserve the earlier versions just in case
     versioning {
       enabled = true
     }
@@ -44,6 +44,13 @@ resource "aws_s3_bucket" "reports" {
     }
 }
 
+##
+# Policy for the bucket
+##
+resource "aws_s3_bucket_policy" "reports" {
+  bucket = "${aws_s3_bucket.reports.id}"
+  policy = "${data.aws_iam_policy_document.allow_ses_to_write_s3.json}"
+}
 data "aws_iam_policy_document" "allow_ses_to_write_s3" {
 
   # Allow ses to write into s3 bucket
@@ -69,7 +76,23 @@ data "aws_iam_policy_document" "allow_ses_to_write_s3" {
   }
 }
 
-resource "aws_s3_bucket_policy" "reports" {
-  bucket ="${aws_s3_bucket.reports.id}"
-  policy   = "${data.aws_iam_policy_document.allow_ses_to_write_s3.json}"
+# Notify s3_mail_handling lambda about changes in bucket::emails/
+resource "aws_s3_bucket_notification" "new_email" {
+  bucket = "${aws_s3_bucket.reports.id}"
+
+  lambda_function {
+    lambda_function_arn = "${aws_lambda_function.s3_mail_handling.arn}"
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "emails/"
+  }
+
+  depends_on = ["aws_lambda_permission.allow_s3"]
+}
+
+resource "aws_lambda_permission" "allow_s3" {
+  statement_id = "AllowExecutionFromS3Bucket"
+  action = "lambda:InvokeFunction"
+  principal = "s3.amazonaws.com"
+  function_name = "${aws_lambda_function.s3_mail_handling.arn}"
+  source_arn = "${aws_s3_bucket.reports.arn}"
 }

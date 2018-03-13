@@ -33,21 +33,21 @@ data "aws_iam_policy_document" "allow_ses_to_use_reports_kms"{
     "*"
     ]
    # These were copied from: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-permissions.html
-   condition {
-     test     = "Null"
-     variable = "kms:EncryptionContext:aws:ses:rule-name"
-     values = [ "false" ]
-   }
-   condition {
-     test     = "Null"
-     variable = "kms:EncryptionContext:aws:ses:message-id"
-     values = [ "false" ]
-   }
-   condition {
-     test     = "StringEquals"
-     variable = "kms:EncryptionContext:aws:ses:source-account"
-     values = [ "${data.aws_caller_identity.current.account_id}" ]
-   }
+   #condition {
+   #  test     = "Null"
+   #  variable = "kms:EncryptionContext:aws:ses:rule-name"
+   #  values = [ "false" ]
+   #}
+   #condition {
+   #  test     = "Null"
+   #  variable = "kms:EncryptionContext:aws:ses:message-id"
+   #  values = [ "false" ]
+   #}
+   #condition {
+   #  test     = "StringEquals"
+   #  variable = "kms:EncryptionContext:aws:ses:source-account"
+   #  values = [ "${data.aws_caller_identity.current.account_id}" ]
+   #}
   }
 }
 

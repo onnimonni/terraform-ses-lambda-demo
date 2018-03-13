@@ -15,3 +15,6 @@ lambda/out
 
 # Ignore node_modules directory from everywhere
 node_modules
+
+# Ignore stuff in tmp
+tmp/

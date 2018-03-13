@@ -15,3 +15,8 @@ If you uploaded something into the s3 buckets you need to use `-force`
 ```
 $ terraform destroy -force
 ```
+
+## TODO
+### Refactor iam policies to json templates
+Usually they are just static files without any interpolation
+When you need to use
